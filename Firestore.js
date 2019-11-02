@@ -18,25 +18,43 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig); 
 var db = firebase.firestore();
 
+/**
+ * Function add_user
+ *  accepts two args
+ *  1) room_id is the room id
+ *  2) userInfo is a user object contains user info ---> id, codeName, and description
+ *  */ 
+const add_user = (room_id, userInfo) => {
+  db.collection("rooms").doc(room_id).update({
+    [`users.${userInfo.id}`]: {
+        userId: userInfo.id,
+        codeName: userInfo.codeName,
+        description: userInfo.description,
+        question_rankings: {
+            q1: 'like',
+            q2: 'dislike',
+            q3: 'dislike',
+            q4: 'like',
+            q5: 'like',
+            q6: 'dislike',
+            q7: 'like',
+        }
+    }
+  }).then(function(docRef) {
+    console.log("Document written with ID: ", room_id, userInfo);
+  })
+  .catch(function(error) {
+      console.error("Error adding document: ", error);
+  });
+};
+
+// add_user("room_2",{id: "user_2", codeName: "bla", description: "description"});
 
 const add_room = (room_id) => {
     db.collection("rooms").doc(room_id).set({
         roomId: room_id,
         users: {
-            user_1: {
-                userId: 'user_1',
-                codename: 'codename1',
-                description: 'random random random 1',
-                question_rankings: {
-                    q1: 'like',
-                    q2: 'dislike',
-                    q3: 'dislike',
-                    q4: 'like',
-                    q5: 'like',
-                    q6: 'dislike',
-                    q7: 'like',
-                }
-            }
+            
         }
     })
     .then(function(docRef) {
@@ -46,7 +64,6 @@ const add_room = (room_id) => {
         console.error("Error adding document: ", error);
     });
 }
-
 
 const add_question_list = (questions_id) => {
     db.collection("questions").doc(questions_id).set({
