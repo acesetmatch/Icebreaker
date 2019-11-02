@@ -4,6 +4,7 @@ import { createAppContainer, createStackNavigator } from 'react-navigation';
 import RoomScreen from '../screens/RoomScreen';
 import HomeScreen from '../screens/HomeScreen';
 import SignUpScreen from '../screens/SignUpScreen';
+import MatchedUserScreen from '../screens/MatchedUserScreen';
 
 export default createAppContainer(
   createStackNavigator(
@@ -29,6 +30,13 @@ export default createAppContainer(
           title: navigation.getParam('roomCode', ''),
         }),
       },
+      MatchedUser: {
+        screen: MatchedUserScreen,
+        path: '',
+        navigationOptions: ({ navigation }) => ({
+          title: navigation.getParam('userObject', '').codeName,
+        }),
+      }
     },
     {
       initialRouteName: 'Home',

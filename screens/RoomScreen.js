@@ -57,6 +57,9 @@ export default class RoomScreen extends Component {
 
   onPressUser = user => {
     console.log('Press user: ', user);
+    this.props.navigation.push("MatchedUser", {
+      user: user
+    })
   };
 
   renderCard = questionId => {
