@@ -43,7 +43,9 @@ const add_user = (room_id, userInfo) => {
       return false
   });
 };
-// // example to add user
+/** 
+ * example to add user
+ * /
 // add_user("room_2", 
 //       {
 //         id: "user_3", 
@@ -61,22 +63,32 @@ const add_user = (room_id, userInfo) => {
 //       }
 // );
 
+/**
+ * get_user fucntion
+ * @param {String} room_id 
+ * @param {String} user_id 
+ */
 const get_user = (room_id, user_id) => {
-  db.collection("rooms").doc(room_id).get({
-    users: {
-        userId: user_id,
-    }
-  }).then(function(docRef) {
-    console.log("Document written with ID: ", user_id, docRef);
-    return true
-  })
-  .catch(function(error) {
-      console.error("Error adding document: ", error);
-      return false
-  });
-}
+  let users = db.collection("rooms").doc(room_id);
+  let user = users.get()
+    .then(doc => {
+      if (!doc.exists) {
+         console.log('No such document!');
+         return false;
+      }
 
-get_user("room_2", "user_3");
+        console.log(doc.data().users[user_id]);
+        return doc.data().users[user_id];
+    })
+    .catch(err => {
+      console.log('Error getting document', err);
+      return false;
+    });
+}
+/**
+ *  example to get a user
+ * */
+// get_user("room_2", "user_3");
 
 
 /**
@@ -98,6 +110,34 @@ const add_room = (room_id) => {
         console.error("Error adding document: ", error);
     });
 }
+
+/**
+ * get_room fucntion
+ * @param {String} room_id 
+ */
+const get_room = (room_id) => {
+  let rooms = db.collection("rooms").doc(room_id)
+    .get()
+    .then(doc => {
+      if (!doc.exists) {
+         console.log('No such document!');
+         return false;
+      }
+
+        console.log(doc.data());
+        return doc.data();
+    })
+    .catch(err => {
+      console.log('Error getting document', err);
+      return false;
+    });
+}
+/**
+ *  example to get a user
+ * */
+// get_room("room_2");
+
+
 
 /**
  * Function add_questions_list
@@ -175,7 +215,9 @@ const add_question_list = (questions_id) => {
   }
 
 
+export default {add_room, get_room, add_user, get_user, add_question_list, get_question_list};
 
+// not used
 const matches = {
     'u1-u2': { commonQuestions: ['q5', 'q7'], matchStrength: 0.85 },
     'u1-u3': { commonQuestions: ['q4', 'q7'], matchStrength: 0.1 },
