@@ -20,7 +20,6 @@ import {
     Divider,
     Icon,
 } from 'react-native-elements';
-import uuidv4 from 'uuid/v4';
 
 import { get_user, get_room } from '../Firestore';
 
@@ -56,9 +55,19 @@ export default class SignUpScreen extends Component {
         } 
     };
 
+    generateUserId = (length) => {
+        var result = '';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        var charactersLength = characters.length;
+        for (var i = 0; i < length; i++) {
+          result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
+      }
+
     _addUser = async (roomId) => {
-        const userId = await AsyncStorage.getItem('user-id');
-        const description = this.state.description;
+        const userId = await AsyncStorage.getItem('user-id') || this.generateUserId(10);
+        const { description, codeName } = this.state;
 
         get_user(roomId, userId, (data)=> {
             data && data.userId == userId ? 
@@ -70,7 +79,8 @@ export default class SignUpScreen extends Component {
             this.props.navigation.replace("CardSwipe", {
                 roomId,
                 userId,
-                description
+                description,
+                codeName
             });
         });
     }

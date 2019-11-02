@@ -8,6 +8,7 @@ import Modal from 'react-native-modal';
 import SAMPLE_QUESTIONS from '../constants/questions';
 import SAMPLE_MATCHES from '../constants/matches';
 import SAMPLE_USERS from '../constants/users';
+import { add_user } from '../Firestore';
 
 export default class CardSwipeScreen extends Component {
     constructor() {
@@ -65,21 +66,31 @@ export default class CardSwipeScreen extends Component {
         );
     };
 
-    enterRoomScreen = () => {
-        const { userId, roomCode } = this.props.navigation.state.params
+    enterRoomScreen = async () => {
+        const { userId, codeName, roomId, description } = this.props.navigation.state.params;
+
+        console.log('!!!!', userId, roomId, codeName, description);
+
+        await add_user(roomId, {
+            userId,
+            codeName,
+            description,
+            questionRankings: this.state.questionRankings
+        });
+
         this.props.navigation.replace("Room", {
             userId,
-            roomCode
+            roomId,
+            codeName
         })
     }
 
     render() {
-        const { navigation } = this.props;
-        const { allUsers, questions } = this.state;
+        const { questions } = this.state;
 
         const orderedQuestions = Object.keys(questions);
         const numOfQuestions = orderedQuestions.length;
-        let userId = navigation.getParam('userId', null);
+
 
         return (
             <SafeAreaView style={styles.container}>

@@ -28,8 +28,8 @@ const db = firebase.firestore();
  *  */ 
 const add_user = (room_id, userInfo) => {
   db.collection("rooms").doc(room_id).update({
-    [`users.${userInfo.id}`]: {
-        userId: userInfo.id,
+    [`users.${userInfo.userId}`]: {
+        userId: userInfo.userId,
         codeName: userInfo.codeName,
         description: userInfo.description,
         questionRankings: userInfo.questionRankings
