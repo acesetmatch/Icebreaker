@@ -26,6 +26,7 @@ export default class RoomScreen extends Component {
 
   componentDidMount() {
     // setTimeout(() => this.setState({ canShowModal: true }), 750);
+    console.log("User id is: " + this.props.navigation.state.params.userId)
   }
 
   shouldShowQuestionRanker() {

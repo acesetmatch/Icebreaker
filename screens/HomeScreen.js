@@ -24,7 +24,6 @@ export default class HomeScreen extends Component {
   constructor() {
     super();
     this.state = {
-      roomCode: '',
       error: false,
       userId: null,
     };
@@ -57,9 +56,9 @@ export default class HomeScreen extends Component {
 
   onPressJoinRoom = () => {
     const { navigation } = this.props;
-    const { roomCode, userId } = this.state;
+    const { userId } = this.state;
     console.log(`Joining room code: ${this.state.roomCode}`);
-    navigation.navigate('Room', { roomCode, userId });
+    navigation.navigate('SignUp', { userId });
 
     // setTimeout(() => {
     //   const random = Math.floor(Math.random() * 2);
@@ -71,10 +70,10 @@ export default class HomeScreen extends Component {
     // }, 500);
   };
 
-  onChangeRoomCode = roomCode => {
-    console.log(`Typing room code: ${roomCode}`);
-    this.setState({ roomCode: roomCode.trim().toUpperCase() });
-  };
+  // onChangeRoomCode = roomCode => {
+  //   console.log(`Typing room code: ${roomCode}`);
+  //   this.setState({ roomCode: roomCode.trim().toUpperCase() });
+  // };
 
   onClearRoomCode = () => {
     console.log(`Clearing room code`);
@@ -91,23 +90,6 @@ export default class HomeScreen extends Component {
         >
           <Button onPress={this.onPressCreateRoom} title="Create Room" />
           <Divider style={{ marginVertical: 30 }} />
-          <Input
-            autoCorrect={false}
-            autoCapitalize="characters"
-            maxLength={6}
-            placeholder="Enter 6-letter event code"
-            value={this.state.roomCode}
-            onChangeText={this.onChangeRoomCode}
-            errorMessage={error ? 'ERROR' : null}
-            rightIcon={
-              <Icon
-                name="clear"
-                size={24}
-                color="black"
-                onPress={this.onClearRoomCode}
-              />
-            }
-          />
           <View style={{ height: 10 }} />
           <Button onPress={this.onPressJoinRoom} title="Join Room" />
         </ScrollView>
