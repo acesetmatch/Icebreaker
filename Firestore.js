@@ -143,7 +143,7 @@ const get_room = (room_id) => {
  * get_questions fucntion
  * @param {String} room_id 
  */
-const get_questions = (list_id) => {
+const get_question_list = (list_id) => {
   let questions = db.collection("questions").doc(list_id)
     .get()
     .then(doc => {
@@ -241,7 +241,7 @@ const add_question_list = (questions_id) => {
   }
 
 
-// export default {add_room, get_room, add_user, get_user, add_question_list, get_question_list};
+  module.exports = {add_room, get_room, add_user, get_user, add_question_list, get_question_list};
 
 // not used
 const matches = {
