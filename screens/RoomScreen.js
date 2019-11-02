@@ -55,12 +55,14 @@ export default class RoomScreen extends Component {
         this.setState({ room: data });
         this.calculateMatches(data);
       });
-    }, 1000);
+    }, 5000);
   }
 
   calculateMatches = async newUsersData => {
     const { navigation } = this.props;
     const { users } = newUsersData;
+
+    console.log(newUsersData);
     if (users == null) {
       return;
     }
@@ -119,9 +121,9 @@ export default class RoomScreen extends Component {
 
   onPressUser = user => {
     console.log('Press user: ', user);
-    this.props.navigation.navigate("MatchedUser", {
-      user: user
-    })
+    this.props.navigation.navigate('MatchedUser', {
+      user: user,
+    });
   };
 
   renderUser = ({ item: userId }) => {
@@ -134,7 +136,7 @@ export default class RoomScreen extends Component {
     const user = users[userId];
     return (
       <ListItem
-        title={user.codename}
+        title={user.codeName || user.codename}
         subtitle={user.description}
         subtitleStyle={{ color: 'gray' }}
         leftElement={<Icon name="smiley" type="octicon" color="blue" />}
@@ -147,7 +149,7 @@ export default class RoomScreen extends Component {
 
   render() {
     const { navigation } = this.props;
-    const { room } = this.state;
+    const { room, matches } = this.state;
 
     if (room.users == null) {
       return null;
