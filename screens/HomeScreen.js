@@ -55,13 +55,14 @@ export default class HomeScreen extends Component {
 
   onPressCreateRoom = () => {
     console.log('Created room!');
+    navigation.navigate('SignUp', { userId, roomState: 'create' });
   };
 
   onPressJoinRoom = () => {
     const { navigation } = this.props;
     const { userId } = this.state;
     console.log(`Joining room code: ${this.state.roomCode}`);
-    navigation.navigate('SignUp', { userId });
+    navigation.navigate('SignUp', { userId, roomState: 'join' });
 
     // setTimeout(() => {
     //   const random = Math.floor(Math.random() * 2);
