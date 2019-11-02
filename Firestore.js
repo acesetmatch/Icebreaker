@@ -18,7 +18,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig); 
 
 // database firestore instance..
-export const db = firebase.firestore();
+const db = firebase.firestore();
 
 /**
  * Function add_user
@@ -26,31 +26,57 @@ export const db = firebase.firestore();
  *  1) room_id is the room id
  *  2) userInfo is a user object contains user info ---> id, codeName, and description
  *  */ 
-export const add_user = (room_id, userInfo) => {
+const add_user = (room_id, userInfo) => {
   db.collection("rooms").doc(room_id).update({
     [`users.${userInfo.id}`]: {
         userId: userInfo.id,
         codeName: userInfo.codeName,
         description: userInfo.description,
-        questionRankings: {
-            q1: 'like',
-            q2: 'dislike',
-            q3: 'dislike',
-            q4: 'like',
-            q5: 'like',
-            q6: 'dislike',
-            q7: 'like',
-        }
+        questionRankings: userInfo.questionRankings
     }
   }).then(function(docRef) {
     console.log("Document written with ID: ", room_id, userInfo);
+    return true
   })
   .catch(function(error) {
       console.error("Error adding document: ", error);
+      return false
   });
 };
-// example to add user
-// add_user("room_2",{id: "user_3", codeName: "bla", description: "description"});
+// // example to add user
+// add_user("room_2", 
+//       {
+//         id: "user_3", 
+//         codeName: "bla", 
+//         description: "description",
+//         questionRankings: {
+//           q1: 'like',
+//           q2: 'dislike',
+//           q3: 'dislike',
+//           q4: 'like',
+//           q5: 'like',
+//           q6: 'dislike',
+//           q7: 'like',
+//         }
+//       }
+// );
+
+// const get_user = (room_id, user_id) => {
+//   db.collection("rooms").doc(room_id).get({
+//     users: {
+//         userId: user_id,
+//     }
+//   }).then(function(docRef) {
+//     console.log("Document written with ID: ", user_id, docRef);
+//     return true
+//   })
+//   .catch(function(error) {
+//       console.error("Error adding document: ", error);
+//       return false
+//   });
+// }
+
+// get_user("room_2", "user_3");
 
 
 /**
@@ -58,7 +84,7 @@ export const add_user = (room_id, userInfo) => {
  *  accepts 1 args
  *  1) room_id is the room id
  *  */ 
-export const add_room = (room_id) => {
+const add_room = (room_id) => {
     db.collection("rooms").doc(room_id).set({
         roomId: room_id,
         users: {
@@ -78,7 +104,7 @@ export const add_room = (room_id) => {
  *  accepts 1 args
  *  1) question_id is the question id
  *  */ 
-export const add_question_list = (questions_id) => {
+const add_question_list = (questions_id) => {
     db.collection("questions").doc(questions_id).set({
         q1: {
             questionId: 'q1',
