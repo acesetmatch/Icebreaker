@@ -4,6 +4,7 @@ import { createAppContainer, createStackNavigator } from 'react-navigation';
 import RoomScreen from '../screens/RoomScreen';
 import HomeScreen from '../screens/HomeScreen';
 import SignUpScreen from '../screens/SignUpScreen';
+import MatchedUserScreen from '../screens/MatchedUserScreen';
 import CardSwipeScreen from '../screens/CardSwipeScreen';
 
 export default createAppContainer(
@@ -41,9 +42,16 @@ export default createAppContainer(
           title: navigation.getParam('roomCode', ''),
         }),
       },
+      MatchedUser: {
+        screen: MatchedUserScreen,
+        path: '',
+        navigationOptions: ({ navigation }) => ({
+          title: "You and " + navigation.getParam('user', '').codename,
+        }),
+      }
     },
     {
-      initialRouteName: 'Home',
+      initialRouteName: 'Room',
     }
   )
 );
