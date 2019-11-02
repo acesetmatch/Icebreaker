@@ -22,6 +22,9 @@ import {
 } from 'react-native-elements';
 import uuidv4 from 'uuid/v4';
 
+import { get_user, get_room } from '../Firestore';
+
+
 export default class SignUpScreen extends Component {
     constructor() {
         super();
@@ -36,7 +39,7 @@ export default class SignUpScreen extends Component {
 
     onPressEnterCardSwipe = () => {
         const { navigation } = this.props;
-        const { roomCode } = this.state;
+        const { roomCode, codeName, errorRoomCode, errorCodeName } = this.state;
         const { userId } = navigation.state.params;
 
         console.log(`Joining room code: ${roomCode}`);
@@ -44,20 +47,46 @@ export default class SignUpScreen extends Component {
         // Validate Room code here
         // this.validateRoomCode()
 
-        this.props.navigation.replace("CardSwipe", {
-            roomCode,
-            userId
-        })
+        if ( roomCode && codeName && !errorRoomCode, !errorCodeName) {
+            this._addUser(roomCode);
+        } else if (!roomCode) {
+            return this.setState({errorRoomCode: true})
+        } else if (!codeName) {
+            return this.setState({errorCodeName: true});
+        } 
     };
 
-    validateRoomCode = async (roomCode) => {
-        // Validate room code here.
+    _addUser = async (roomId) => {
+        const userId = await AsyncStorage.getItem('user-id');
+        get_user(roomId, userId, (data)=> {
+            data && data.userId == userId ? 
+            this.props.navigation.replace("Room", {
+                roomId,
+                userId
+            })
+            : 
+            this.props.navigation.replace("CardSwipe", {
+                roomId,
+                userId
+            });
+        });
     }
 
     onChangeRoomCode = roomCode => {
-        console.log(`Typing room code: ${roomCode}`);
-        this.setState({ roomCode: roomCode.trim().toUpperCase() });
+        const roomId = roomCode.trim().toUpperCase();
+        console.log(`Typing room code: ${roomId}`);
+        this.setState({ roomCode: roomId });
+
+        if (roomCode.length > 5) this._checkRoom(roomId);
+        
     };
+
+    _checkRoom = async (roomId) => {
+        await get_room(roomId, (data) => {
+            console.log('Found room: ', data)
+            data && data.roomId == roomId ? this.setState({ errorRoomCode: false }) : this.setState({ errorRoomCode: true }) ;
+        });
+    }
 
     onChangeCodeName = codeName => {
         this.setState({ codeName });
@@ -73,7 +102,7 @@ export default class SignUpScreen extends Component {
     };
 
     render() {
-        const { error } = this.state;
+        const { errorCodeName, errorRoomCode } = this.state;
         return (
             <View style={styles.container}>
                 <ScrollView
@@ -91,7 +120,7 @@ export default class SignUpScreen extends Component {
                             placeholder="Enter 6-letter event code"
                             value={this.state.roomCode}
                             onChangeText={this.onChangeRoomCode}
-                            errorMessage={error ? 'ERROR' : null}
+                            errorMessage={errorRoomCode ? "Room doesn't exist!" : null}
                             rightIcon={
                                 <Icon
                                     name="clear"
@@ -109,7 +138,7 @@ export default class SignUpScreen extends Component {
                             placeholder="Enter a code name (e.g: Superman)"
                             value={this.state.codeName}
                             onChangeText={this.onChangeCodeName}
-                            errorMessage={error ? 'ERROR' : null}
+                            errorMessage={errorCodeName ? "Please enter a nickname!" : null}
                             style={{ marginLeft: 0 }}
                             rightIcon={
                                 <Icon
