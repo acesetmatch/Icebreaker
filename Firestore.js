@@ -69,8 +69,7 @@ const add_user = (room_id, userInfo) => {
  * @param {String} user_id 
  */
 const get_user = (room_id, user_id) => {
-  let users = db.collection("rooms").doc(room_id);
-  let user = users.get()
+  let users = db.collection("rooms").doc(room_id).get()
     .then(doc => {
       if (!doc.exists) {
          console.log('No such document!');
@@ -84,7 +83,8 @@ const get_user = (room_id, user_id) => {
       console.log('Error getting document', err);
       return false;
     });
-}
+};
+
 /**
  *  example to get a user
  * */
@@ -96,9 +96,10 @@ const get_user = (room_id, user_id) => {
  *  accepts 1 args
  *  1) room_id is the room id
  *  */ 
-const add_room = (room_id) => {
+const add_room = (room_id, room_name) => {
     db.collection("rooms").doc(room_id).set({
         roomId: room_id,
+        roomName: room_name,
         users: {
             
         }
@@ -111,12 +112,14 @@ const add_room = (room_id) => {
     });
 }
 
+add_room("room_1", "First room");
+
 /**
  * get_room fucntion
  * @param {String} room_id 
  */
 const get_room = (room_id) => {
-  let rooms = db.collection("rooms").doc(room_id)
+  db.collection("rooms").doc(room_id)
     .get()
     .then(doc => {
       if (!doc.exists) {
@@ -144,7 +147,7 @@ const get_room = (room_id) => {
  * @param {String} room_id 
  */
 const get_question_list = (list_id) => {
-  let questions = db.collection("questions").doc(list_id)
+  db.collection("questions").doc(list_id)
     .get()
     .then(doc => {
       if (!doc.exists) {
