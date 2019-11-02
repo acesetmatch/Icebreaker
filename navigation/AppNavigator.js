@@ -19,9 +19,13 @@ export default createAppContainer(
       SignUp: {
         screen: SignUpScreen,
         path: '',
-        navigationOptions: {
-          title: 'Join Room',
-        },
+        navigationOptions: ({ navigation }) => ({
+          title: `${
+            navigation.getParam('roomState', 'join') === 'create'
+              ? 'Create'
+              : 'Join'
+          } Room`,
+        }),
       },
       CardSwipe: {
         screen: CardSwipeScreen,

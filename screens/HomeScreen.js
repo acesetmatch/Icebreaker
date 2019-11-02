@@ -1,4 +1,3 @@
-import * as WebBrowser from 'expo-web-browser';
 import React, { Component, Fragment } from 'react';
 import {
   Image,
@@ -20,9 +19,9 @@ import {
   Divider,
   Icon,
 } from 'react-native-elements';
-import uuidv4 from 'uuid/v4';
 import logoAsset from '../assets/logo.jpg';
 import { get_question_list } from '../Firestore';
+
 
 export default class HomeScreen extends Component {
   constructor() {
@@ -39,14 +38,25 @@ export default class HomeScreen extends Component {
     this.getQuestions();
   }
 
+
+  generateUserId = (length) => {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+
   hydrateUserId = async () => {
     try {
-      const value = await AsyncStorage.getItem('user-id');
+      const value = await AsyncStorage.getItem('user-id') || this.generateUserId(10);
       if (value !== null) {
         console.log('Hydrating user id: ', value);
         this.setState({ userId: value });
       } else {
-        const newId = uuidv4();
+        const newId = this.generateUserId(10);
         console.log('Setting new user id: ', newId);
         await AsyncStorage.setItem('user-id', newId);
         this.setState({ userId: newId });
@@ -66,14 +76,17 @@ export default class HomeScreen extends Component {
   }
 
   onPressCreateRoom = () => {
-    console.log('Created room!');
+    const { navigation } = this.props;
+    const { userId } = this.state;
+    console.log('Creating room!');
+    navigation.navigate('SignUp', { userId, roomState: 'create' });
   };
 
   onPressJoinRoom = (questionList) => {
     const { navigation } = this.props;
     const { userId } = this.state;
-    console.log(`Joining room code: ${this.state.roomCode}`);
-    navigation.navigate('SignUp', { userId, questionList: questionList });
+    navigation.navigate('SignUp', { userId, questionList: questionList, roomState: 'join' });
+    console.log(`Joining room!`);
 
     // setTimeout(() => {
     //   const random = Math.floor(Math.random() * 2);
