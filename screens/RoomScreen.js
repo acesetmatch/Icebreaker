@@ -1,66 +1,31 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View, FlatList } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
-import { Button, Text } from 'react-native-elements';
+import { Button, Text, ListItem, Icon } from 'react-native-elements';
 import Swiper from 'react-native-deck-swiper';
 import Modal from 'react-native-modal';
+
+import SAMPLE_QUESTIONS from '../constants/questions';
+import SAMPLE_MATCHES from '../constants/matches';
+import SAMPLE_USERS from '../constants/users';
 
 export default class RoomScreen extends Component {
   constructor() {
     super();
     this.state = {
       canShowModal: false,
-      questions: {
-        '1': {
-          questionId: '1',
-          prompt:
-            'Do you think that people should have the freedom to blah blah blah?  1',
-          topics: ['testTopic1'],
-        },
-        '2': {
-          questionId: '2',
-          prompt:
-            'Do you think that people should have the freedom to blah blah blah?  2',
-          topics: ['testTopic2'],
-        },
-        '3': {
-          questionId: '3',
-          prompt:
-            'Do you think that people should have the freedom to blah blah blah?  3',
-          topics: ['testTopic3'],
-        },
-        '4': {
-          questionId: '4',
-          prompt:
-            'Do you think that people should have the freedom to blah blah blah?  4',
-          topics: ['testTopic4'],
-        },
-        '5': {
-          questionId: '5',
-          prompt:
-            'Do you think that people should have the freedom to blah blah blah?  5',
-          topics: ['testTopic5'],
-        },
-        '6': {
-          questionId: '6',
-          prompt:
-            'Do you think that people should have the freedom to blah blah blah?  6',
-          topics: ['testTopic6'],
-        },
-        '7': {
-          questionId: '7',
-          prompt:
-            'Do you think that people should have the freedom to blah blah blah?  7',
-          topics: ['testTopic7'],
-        },
-      },
+      questions: SAMPLE_QUESTIONS,
       questionRankings: {},
       inProgressQuestionRankings: {},
+      allUsers: Object.keys(SAMPLE_USERS),
+      currentUsers: Object.keys(SAMPLE_USERS).splice(2),
+      users: SAMPLE_USERS,
+      matches: SAMPLE_MATCHES,
     };
   }
 
   componentDidMount() {
-    setTimeout(() => this.setState({ canShowModal: true }), 750);
+    // setTimeout(() => this.setState({ canShowModal: true }), 750);
   }
 
   shouldShowQuestionRanker() {
@@ -89,6 +54,10 @@ export default class RoomScreen extends Component {
     });
   };
 
+  onPressUser = user => {
+    console.log('Press user: ', user);
+  };
+
   renderCard = questionId => {
     const { questions } = this.state;
     const question = questions[questionId];
@@ -99,12 +68,28 @@ export default class RoomScreen extends Component {
     );
   };
 
+  renderUser = ({ item }) => {
+    const { users } = this.state;
+    const user = users[item];
+    return (
+      <ListItem
+        title={user.codename}
+        subtitle={user.description}
+        subtitleStyle={{ color: 'gray' }}
+        leftElement={<Icon name="smiley" type="octicon" color="blue" />}
+        bottomDivider
+        chevron
+        onPress={() => this.onPressUser(user)}
+      />
+    );
+  };
+
   render() {
     const { navigation } = this.props;
-    const { questions } = this.state;
+    const { allUsers, questions } = this.state;
 
     const orderedQuestions = Object.keys(questions);
-    const userId = navigation.getParam('userId', null);
+    let userId = navigation.getParam('userId', null);
 
     return (
       <View style={styles.container}>
@@ -130,13 +115,12 @@ export default class RoomScreen extends Component {
             }}
           />
         </Modal>
-        <ScrollView style={styles.container}>
-          {/**
-           * Go ahead and delete ExpoLinksView and replace it with your content;
-           * we just wanted to provide you with some helpful links.
-           */}
-          <ExpoLinksView />
-        </ScrollView>
+        <FlatList
+          style={styles.container}
+          data={allUsers}
+          renderItem={this.renderUser}
+          keyExtractor={item => item.id}
+        />
       </View>
     );
   }
