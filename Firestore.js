@@ -30,7 +30,7 @@ const add_user = (room_id, userInfo) => {
         userId: userInfo.id,
         codeName: userInfo.codeName,
         description: userInfo.description,
-        question_rankings: {
+        questionRankings: {
             q1: 'like',
             q2: 'dislike',
             q3: 'dislike',
@@ -47,9 +47,15 @@ const add_user = (room_id, userInfo) => {
       console.error("Error adding document: ", error);
   });
 };
+// example to add user
+// add_user("room_2",{id: "user_3", codeName: "bla", description: "description"});
 
-// add_user("room_2",{id: "user_2", codeName: "bla", description: "description"});
 
+/**
+ * Function add_room
+ *  accepts 1 args
+ *  1) room_id is the room id
+ *  */ 
 const add_room = (room_id) => {
     db.collection("rooms").doc(room_id).set({
         roomId: room_id,
@@ -65,6 +71,11 @@ const add_room = (room_id) => {
     });
 }
 
+/**
+ * Function add_questions_list
+ *  accepts 1 args
+ *  1) question_id is the question id
+ *  */ 
 const add_question_list = (questions_id) => {
     db.collection("questions").doc(questions_id).set({
         q1: {
@@ -137,7 +148,7 @@ const add_question_list = (questions_id) => {
 
 
 
-  const matches = {
+const matches = {
     'u1-u2': { commonQuestions: ['q5', 'q7'], matchStrength: 0.85 },
     'u1-u3': { commonQuestions: ['q4', 'q7'], matchStrength: 0.1 },
     'u1-u4': { commonQuestions: ['q4', 'q5', 'q7'], matchStrength: 0.75 },
