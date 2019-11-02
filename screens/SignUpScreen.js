@@ -80,8 +80,8 @@ export default class SignUpScreen extends Component {
 
   _addUser = async (roomId) => {
     const userId = await AsyncStorage.getItem('user-id') || this.generateUserId(10);
-    const { description, codeName } = this.state;
-    const questionList = this.props.navigation.state.getParam('questionList');
+    const { description, codeName, roomName } = this.state;
+    const { questionList } = this.props.navigation.state.params;
     const roomState = this.props.navigation.getParam('roomState', 'join');
 
     console.log("FROM SUIGN UP: ", description, codeName, questionList)
@@ -92,6 +92,7 @@ export default class SignUpScreen extends Component {
           roomId,
           userId,
           roomState,
+          roomName
         })
         :
         this.props.navigation.replace("CardSwipe", {
@@ -100,7 +101,8 @@ export default class SignUpScreen extends Component {
           description,
           codeName,
           questionList,
-          roomState
+          roomState,
+          roomName
         });
     });
   }

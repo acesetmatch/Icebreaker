@@ -64,12 +64,12 @@ export default class CardSwipeScreen extends Component {
     };
 
     enterRoomScreen = async () => {
-        const { userId, codeName, roomId, description, roomState } = this.props.navigation.state.params;
+        const { userId, codeName, roomId, description, roomState, roomName } = this.props.navigation.state.params;
 
         console.log('!!!!', userId, roomId, codeName, description);
 
         if (roomState != "join") {
-            await add_room(roomId);
+            await add_room(roomId, roomName);
         }
         await add_user(roomId, {
             userId,
