@@ -61,22 +61,22 @@ const add_user = (room_id, userInfo) => {
 //       }
 // );
 
-// const get_user = (room_id, user_id) => {
-//   db.collection("rooms").doc(room_id).get({
-//     users: {
-//         userId: user_id,
-//     }
-//   }).then(function(docRef) {
-//     console.log("Document written with ID: ", user_id, docRef);
-//     return true
-//   })
-//   .catch(function(error) {
-//       console.error("Error adding document: ", error);
-//       return false
-//   });
-// }
+const get_user = (room_id, user_id) => {
+  db.collection("rooms").doc(room_id).get({
+    users: {
+        userId: user_id,
+    }
+  }).then(function(docRef) {
+    console.log("Document written with ID: ", user_id, docRef);
+    return true
+  })
+  .catch(function(error) {
+      console.error("Error adding document: ", error);
+      return false
+  });
+}
 
-// get_user("room_2", "user_3");
+get_user("room_2", "user_3");
 
 
 /**
