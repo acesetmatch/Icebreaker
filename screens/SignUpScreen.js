@@ -20,7 +20,6 @@ import {
   Divider,
   Icon,
 } from 'react-native-elements';
-import uuidv4 from 'uuid/v4';
 
 import { get_user, get_room } from '../Firestore';
 
@@ -41,11 +40,10 @@ export default class SignUpScreen extends Component {
   componentDidMount() {
     const { navigation } = this.props;
     const roomSelectState = navigation.getParam('roomState', 'join');
-
     if (roomSelectState === 'create') {
-      this.setState({ roomCode: this.generateRoomCode() });
+        this.setState({ roomCode: this.generateRoomCode() });
+      }
     }
-  }
 
   generateRoomCode = (length = 6) => {
     var result = '';
@@ -57,39 +55,51 @@ export default class SignUpScreen extends Component {
     return result;
   };
 
-  onPressEnterCardSwipe = () => {
-    const { navigation } = this.props;
-    const { roomCode, codeName, errorRoomCode, errorCodeName } = this.state;
-    const { userId } = navigation.state.params;
+    onPressEnterCardSwipe = () => {
+        const { roomCode, codeName, errorRoomCode, errorCodeName } = this.state;
 
-    console.log(`Joining room code: ${roomCode}`);
+        console.log(`Joining room code: ${roomCode}`);
+    
+        if (roomCode && codeName && !errorRoomCode && !errorCodeName) {
+          this._addUser(roomCode);
+        } else if (!roomCode) {
+          return this.setState({ errorRoomCode: true });
+        } else if (!codeName) {
+          return this.setState({ errorCodeName: true });
+        }
+    };
 
-    // Validate Room code here
-    // this.validateRoomCode()
+    generateUserId = (length) => {
+        var result = '';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        var charactersLength = characters.length;
+        for (var i = 0; i < length; i++) {
+          result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
+      }
 
-    if (roomCode && codeName && !errorRoomCode && !errorCodeName) {
-      this._addUser(roomCode);
-    } else if (!roomCode) {
-      return this.setState({ errorRoomCode: true });
-    } else if (!codeName) {
-      return this.setState({ errorCodeName: true });
+    _addUser = async (roomId) => {
+        const userId = await AsyncStorage.getItem('user-id') || this.generateUserId(10);
+        const { description, codeName } = this.state;
+
+        console.log("FROM SUIGN UP: ", description, codeName )
+
+        get_user(roomId, userId, (data)=> {
+            data && data.userId == userId ? 
+            this.props.navigation.replace("Room", {
+                roomId,
+                userId,
+            })
+            : 
+            this.props.navigation.replace("CardSwipe", {
+                roomId,
+                userId,
+                description,
+                codeName
+            });
+        });
     }
-  };
-
-  _addUser = async roomId => {
-    const userId = await AsyncStorage.getItem('user-id');
-    get_user(roomId, userId, data => {
-      data && data.userId == userId
-        ? this.props.navigation.replace('Room', {
-            roomId,
-            userId,
-          })
-        : this.props.navigation.replace('CardSwipe', {
-            roomId,
-            userId,
-          });
-    });
-  };
 
   onChangeRoomCode = roomCode => {
     const roomId = roomCode.trim().toUpperCase();
