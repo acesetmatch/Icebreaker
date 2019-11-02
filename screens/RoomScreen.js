@@ -25,8 +25,7 @@ export default class RoomScreen extends Component {
   }
 
   componentDidMount() {
-    // setTimeout(() => this.setState({ canShowModal: true }), 750);
-    console.log("User id is: " + this.props.navigation.state.params.userId)
+    console.log("Nav params is: " + JSON.stringify(this.props.navigation.state.params))
   }
 
   shouldShowQuestionRanker() {
@@ -97,28 +96,6 @@ export default class RoomScreen extends Component {
 
     return (
       <View style={styles.container}>
-        <Modal
-          animationInTiming={600}
-          isVisible={this.shouldShowQuestionRanker()}
-        >
-          <Swiper
-            cardIndex={0}
-            stackSize={3}
-            useViewOverflow={false}
-            verticalSwipe={false}
-            cards={orderedQuestions}
-            renderCard={this.renderCard}
-            onSwipedLeft={cardIndex => this.onSwipe(cardIndex, 'dislike')}
-            onSwipedRight={cardIndex => this.onSwipe(cardIndex, 'like')}
-            onSwipedAll={this.onSwipedAll}
-            cardHorizontalMargin={0}
-            containerStyle={{
-              marginHorizontal: -20,
-              paddingHorizontal: 20,
-              backgroundColor: 'transparent',
-            }}
-          />
-        </Modal>
         <FlatList
           style={styles.container}
           data={allUsers}

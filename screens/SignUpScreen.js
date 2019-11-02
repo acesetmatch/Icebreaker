@@ -34,7 +34,7 @@ export default class SignUpScreen extends Component {
     }
 
 
-    onPressJoinRoom = () => {
+    onPressEnterCardSwipe = () => {
         const { navigation } = this.props;
         const { roomCode } = this.state;
         const { userId } = navigation.state.params;
@@ -43,12 +43,11 @@ export default class SignUpScreen extends Component {
 
         // Validate Room code here
         // this.validateRoomCode()
-        const resetAction = StackActions.reset({
-            index: 0,
-            actions: [NavigationActions.navigate({ routeName: 'Room', params: { roomCode, userId } }),],
-        });
 
-        this.props.navigation.dispatch(resetAction);
+        this.props.navigation.replace("CardSwipe", {
+            roomCode,
+            userId
+        })
     };
 
     validateRoomCode = async (roomCode) => {
@@ -133,7 +132,7 @@ export default class SignUpScreen extends Component {
                         />
                     </View>
                 </ScrollView>
-                <Button style={styles.joinButton} onPress={this.onPressJoinRoom} title="Join Room" />
+                <Button style={styles.joinButton} onPress={this.onPressEnterCardSwipe} title="Start Swiping" />
 
             </View>
         );
