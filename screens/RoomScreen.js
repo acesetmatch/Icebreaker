@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet, View, FlatList } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  FlatList,
+  AsyncStorage,
+} from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
 import { Button, Text, ListItem, Icon } from 'react-native-elements';
 import Swiper from 'react-native-deck-swiper';
 import Modal from 'react-native-modal';
 import _ from 'lodash';
 
+import { get_room } from '../Firestore';
 import SAMPLE_ROOM from '../constants/room';
 import SAMPLE_QUESTIONS from '../constants/questions';
 
@@ -13,11 +20,7 @@ export default class RoomScreen extends Component {
   constructor() {
     super();
     this.state = {
-      canShowModal: false,
-      questions: SAMPLE_QUESTIONS,
-      questionRankings: {},
-      inProgressQuestionRankings: {},
-      room: SAMPLE_ROOM,
+      room: {},
       matches: {},
     };
   }
@@ -28,17 +31,41 @@ export default class RoomScreen extends Component {
     );
     // setTimeout(() => this.setState({ canShowModal: true }), 750);
     console.log('User id is: ' + this.props.navigation.state.params.userId);
-    this.calculateMatches();
+
+    const { navigation } = this.props;
+    console.log('Nav params is: ' + JSON.stringify(navigation.state.params));
+    console.log('User id is: ' + navigation.state.params.userId);
+    let userId = navigation.getParam('userId', null);
+    let roomCode = navigation.getParam('roomCode', null);
+    // const roomRef = get_room_ref(roomCode);
+    // let observer = roomRef.onSnapshot(
+    //   newUsersSnapshot => {
+    //     const newUsersData = newUsersSnapshot.data();
+    //     this.setState({ room: newUsersData });
+    //     this.calculateMatches(newUsersData);
+    //     observer();
+    //   },
+    //   error => {
+    //     console.log(`Encountered error: ${err}`);
+    //   }
+    // );
+    setInterval(() => {
+      get_room(roomCode, data => {
+        console.log(data);
+        this.setState({ room: data });
+        this.calculateMatches(data);
+      });
+    }, 1000);
   }
 
-  calculateMatches = () => {
+  calculateMatches = async newUsersData => {
     const { navigation } = this.props;
-    const {
-      room: { users },
-      matches,
-    } = this.state;
-    let userId = navigation.getParam('userId', null);
-    userId = 'u1'; // temporary
+    const { users } = newUsersData;
+    if (users == null) {
+      return;
+    }
+
+    let userId = await AsyncStorage.getItem('user-id');
     const currentUser = users[userId];
     const currentUserLikedQuestions = _.filter(
       currentUser.questionRankings,
@@ -90,32 +117,6 @@ export default class RoomScreen extends Component {
     this.setState({ matches: updatedMatches });
   };
 
-  shouldShowQuestionRanker() {
-    const { canShowModal, questionRankings } = this.state;
-    return canShowModal && Object.keys(questionRankings).length === 0;
-  }
-
-  onSwipe = (cardIndex, ranking) => {
-    const { questions, inProgressQuestionRankings } = this.state;
-    const questionId = questions[cardIndex];
-    console.log(`Question id ${questionId} is ${ranking}`);
-    this.setState({
-      inProgressQuestionRankings: {
-        ...inProgressQuestionRankings,
-        questionId: ranking,
-      },
-    });
-  };
-
-  onSwipedAll = () => {
-    const { inProgressQuestionRankings } = this.state;
-    console.log('Done swiping!');
-    this.setState({
-      questionRankings: inProgressQuestionRankings,
-      inProgressQuestionRankings: {},
-    });
-  };
-
   onPressUser = user => {
     console.log('Press user: ', user);
     this.props.navigation.navigate("MatchedUser", {
@@ -123,21 +124,14 @@ export default class RoomScreen extends Component {
     })
   };
 
-  renderCard = questionId => {
-    const { questions } = this.state;
-    const question = questions[questionId];
-    return (
-      <View style={styles.card}>
-        <Text style={styles.text}>{question.prompt}</Text>
-      </View>
-    );
-  };
+  renderUser = ({ item: userId }) => {
+    const { room } = this.state;
+    if (room.users == null) {
+      return null;
+    }
 
-  renderUser = ({ item }) => {
-    const {
-      room: { users },
-    } = this.state;
-    const user = users[item];
+    const { users } = room;
+    const user = users[userId];
     return (
       <ListItem
         title={user.codename}
@@ -153,15 +147,14 @@ export default class RoomScreen extends Component {
 
   render() {
     const { navigation } = this.props;
-    const {
-      room: { users },
-      questions,
-    } = this.state;
+    const { room } = this.state;
 
+    if (room.users == null) {
+      return null;
+    }
+
+    const { users } = room;
     const allUsers = Object.keys(users);
-    const orderedQuestions = Object.keys(questions);
-    let userId = navigation.getParam('userId', null);
-    let roomCode = navigation.getParam('roomCode', null);
 
     return (
       <View style={styles.container}>
