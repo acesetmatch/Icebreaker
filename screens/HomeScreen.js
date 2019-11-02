@@ -24,32 +24,31 @@ export default class HomeScreen extends Component {
   constructor() {
     super();
     this.state = {
-      roomCode: '',
       error: false,
       userId: null,
     };
   }
 
   componentDidMount() {
-    // this.hydrateUserId();
+    this.hydrateUserId();
   }
 
-  // hydrateUserId = async () => {
-  //   try {
-  //     const value = await AsyncStorage.getItem('user-id');
-  //     if (value !== null) {
-  //       console.log('Hydrating user id: ', value);
-  //       this.setState({ userId: value });
-  //     } else {
-  //       const newId = uuidv4();
-  //       console.log('Setting new user id: ', newId);
-  //       await AsyncStorage.setItem('user-id', newId);
-  //       this.setState({ userId: newId });
-  //     }
-  //   } catch (error) {
-  //     console.log('AsyncStorage error: ', error);
-  //   }
-  // };
+  hydrateUserId = async () => {
+    try {
+      const value = await AsyncStorage.getItem('user-id');
+      if (value !== null) {
+        console.log('Hydrating user id: ', value);
+        this.setState({ userId: value });
+      } else {
+        const newId = uuidv4();
+        console.log('Setting new user id: ', newId);
+        await AsyncStorage.setItem('user-id', newId);
+        this.setState({ userId: newId });
+      }
+    } catch (error) {
+      console.log('AsyncStorage error: ', error);
+    }
+  };
 
   onPressCreateRoom = () => {
     console.log('Created room!');
@@ -57,9 +56,9 @@ export default class HomeScreen extends Component {
 
   onPressJoinRoom = () => {
     const { navigation } = this.props;
-    const { roomCode, userId } = this.state;
+    const { userId } = this.state;
     console.log(`Joining room code: ${this.state.roomCode}`);
-    navigation.navigate('SignUp');
+    navigation.navigate('SignUp', { userId });
 
     // setTimeout(() => {
     //   const random = Math.floor(Math.random() * 2);
@@ -71,10 +70,10 @@ export default class HomeScreen extends Component {
     // }, 500);
   };
 
-  onChangeRoomCode = roomCode => {
-    console.log(`Typing room code: ${roomCode}`);
-    this.setState({ roomCode: roomCode.trim().toUpperCase() });
-  };
+  // onChangeRoomCode = roomCode => {
+  //   console.log(`Typing room code: ${roomCode}`);
+  //   this.setState({ roomCode: roomCode.trim().toUpperCase() });
+  // };
 
   onClearRoomCode = () => {
     console.log(`Clearing room code`);

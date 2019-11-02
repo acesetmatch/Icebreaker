@@ -30,35 +30,16 @@ export default class SignUpScreen extends Component {
             codeName: '',
             description: '',
             error: false,
-            userId: null,
         };
     }
 
-    componentDidMount() {
-        this.hydrateUserId();
-    }
-
-    hydrateUserId = async () => {
-        try {
-            const value = await AsyncStorage.getItem('user-id');
-            if (value !== null) {
-                console.log('Hydrating user id: ', value);
-                this.setState({ userId: value });
-            } else {
-                const newId = uuidv4();
-                console.log('Setting new user id: ', newId);
-                await AsyncStorage.setItem('user-id', newId);
-                this.setState({ userId: newId });
-            }
-        } catch (error) {
-            console.log('AsyncStorage error: ', error);
-        }
-    };
 
     onPressJoinRoom = () => {
         const { navigation } = this.props;
-        const { roomCode, userId } = this.state;
-        console.log(`Joining room code: ${this.state.roomCode}`);
+        const { roomCode } = this.state;
+        const { userId } = navigation.state.params;
+
+        console.log(`Joining room code: ${roomCode}`);
 
         // Validate Room code here
         // this.validateRoomCode()
@@ -71,21 +52,7 @@ export default class SignUpScreen extends Component {
     };
 
     validateRoomCode = async (roomCode) => {
-        try {
-            // Await async
-            const value = await AsyncStorage.getItem('user-id');
-            if (value !== null) {
-                console.log('Hydrating user id: ', value);
-                this.setState({ userId: value });
-            } else {
-                const newId = uuidv4();
-                console.log('Setting new user id: ', newId);
-                await AsyncStorage.setItem('user-id', newId);
-                this.setState({ userId: newId });
-            }
-        } catch (error) {
-            alert("Error validating room code")
-        }
+        // Validate room code here.
     }
 
     onChangeRoomCode = roomCode => {
