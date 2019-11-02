@@ -5,6 +5,7 @@ import {
   View,
   FlatList,
   AsyncStorage,
+  ActivityIndicator,
 } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
 import { Button, Text, ListItem, Icon } from 'react-native-elements';
@@ -152,11 +153,27 @@ export default class RoomScreen extends Component {
     const { room, matches } = this.state;
 
     if (room.users == null) {
-      return null;
+      return (
+        <ActivityIndicator
+          size="large"
+          color="#0000ff"
+          style={{ marginTop: 50 }}
+        />
+      );
     }
 
     const { users } = room;
     const allUsers = Object.keys(users);
+
+    if (allUsers.length === 0) {
+      return (
+        <ActivityIndicator
+          size="large"
+          color="#0000ff"
+          style={{ marginTop: 50 }}
+        />
+      );
+    }
 
     return (
       <View style={styles.container}>
