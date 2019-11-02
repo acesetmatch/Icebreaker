@@ -132,7 +132,7 @@ export default class SignUpScreen extends Component {
                         />
                     </View>
                 </ScrollView>
-                <Button style={styles.joinButton} onPress={this.onPressEnterCardSwipe} title="Join Room" />
+                <Button style={styles.joinButton} onPress={this.onPressEnterCardSwipe} title="Start Swiping" />
 
             </View>
         );

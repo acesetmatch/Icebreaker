@@ -91,32 +91,31 @@ export default class CardSwipeScreen extends Component {
                         <Text>{`${this.state.numOfQuestionsLeft} / ${numOfQuestions}`}</Text>
                     </View>
                 }
-                {
-                    this.state.finishedQuestions ?
-                        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                            <Text>You're done with all your questions</Text>
-                        </View>
-                        :
-                        <Swiper
-                            cardIndex={0}
-                            stackSize={3}
-                            useViewOverflow={false}
-                            verticalSwipe={false}
-                            cards={orderedQuestions}
-                            renderCard={this.renderCard}
-                            onSwipedLeft={cardIndex => this.onSwipe(cardIndex, 'dislike')}
-                            onSwipedRight={cardIndex => this.onSwipe(cardIndex, 'like')}
-                            onSwipedAll={this.onSwipedAll}
-                            cardHorizontalMargin={0}
-                            containerStyle={{
-                                flex: 1,
-                                paddingHorizontal: 20,
-                            }}
-                        />
-                }
-                <TouchableOpacity style={styles.joinButton} onPress={this.enterRoomScreen}>
-                    <Text style={{ color: "#fff" }}>Join Room</Text>
-                </TouchableOpacity>
+                <View style={{ flex: 1 }} >
+                    {
+                        this.state.finishedQuestions ?
+                            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                                <Text>You're done with all your questions</Text>
+                                <TouchableOpacity style={styles.joinButton} onPress={this.enterRoomScreen}>
+                                    <Text style={{ color: "#fff" }}>Join Room</Text>
+                                </TouchableOpacity>
+                            </View>
+                            :
+                            <Swiper
+                                cardIndex={0}
+                                stackSize={3}
+                                useViewOverflow={false}
+                                verticalSwipe={false}
+                                cards={orderedQuestions}
+                                renderCard={this.renderCard}
+                                onSwipedLeft={cardIndex => this.onSwipe(cardIndex, 'dislike')}
+                                onSwipedRight={cardIndex => this.onSwipe(cardIndex, 'like')}
+                                onSwipedAll={this.onSwipedAll}
+                                cardHorizontalMargin={0}
+                                backgroundColor={'#F5FCFF'}
+                            />
+                    }
+                </View>
             </SafeAreaView >
         );
     }
@@ -126,6 +125,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F5FCFF',
+        padding: 10
     },
     card: {
         flex: 1,
@@ -147,10 +147,10 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
     },
     joinButton: {
-        // position: "absolute",
-        // bottom: 25,
-        // left: 25,
-        // right: 25,
+        marginTop: 25,
+        alignSelf: "stretch",
+        marginLeft: 25,
+        marginRight: 25,
         height: 50,
         borderRadius: 5,
         justifyContent: "center",
