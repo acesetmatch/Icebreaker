@@ -13,21 +13,21 @@ export default createAppContainer(
         screen: HomeScreen,
         path: '',
         navigationOptions: {
-          title: 'Ice Breaker',
+          header: null,
         },
       },
       SignUp: {
         screen: SignUpScreen,
         path: '',
         navigationOptions: {
-          title: 'Sign Up',
+          title: 'Join Room',
         },
       },
       CardSwipe: {
         screen: CardSwipeScreen,
         path: '',
         navigationOptions: {
-          title: 'Swipe your questions',
+          title: 'Conversation Starters',
         },
       },
       Room: {

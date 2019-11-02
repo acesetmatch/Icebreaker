@@ -1,5 +1,5 @@
 import * as WebBrowser from 'expo-web-browser';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import {
   Image,
   Platform,
@@ -8,7 +8,9 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ImageBackground,
   AsyncStorage,
+  SafeAreaView,
 } from 'react-native';
 import {
   Header,
@@ -19,6 +21,7 @@ import {
   Icon,
 } from 'react-native-elements';
 import uuidv4 from 'uuid/v4';
+import logoAsset from '../assets/logo.jpg';
 
 export default class HomeScreen extends Component {
   constructor() {
@@ -83,17 +86,61 @@ export default class HomeScreen extends Component {
   render() {
     const { error } = this.state;
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <ScrollView
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
         >
-          <Button onPress={this.onPressCreateRoom} title="Create Room" />
-          <Divider style={{ marginVertical: 30 }} />
-          <View style={{ height: 10 }} />
-          <Button onPress={this.onPressJoinRoom} title="Join Room" />
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginBottom: 30,
+            }}
+          >
+            <ImageBackground
+              style={{
+                height: 'auto',
+                width: 300,
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: 10,
+              }}
+              source={logoAsset}
+              resizeMode="contain"
+            >
+              <Text style={styles.logoText}>{'Icebreaker'}</Text>
+            </ImageBackground>
+            <Text style={styles.logoSubtitle}>
+              {'The easy way to break the ice\nand make better connections'}
+            </Text>
+          </View>
+          <View style={styles.buttonsContainer}>
+            <View style={{ alignItems: 'center' }}>
+              <Button
+                containerStyle={styles.buttonContainer}
+                onPress={this.onPressCreateRoom}
+                title="Create Room"
+              />
+              <Text style={styles.buttonSubtitle}>
+                {"Let's get this party started"}
+              </Text>
+            </View>
+            <View style={{ alignItems: 'center' }}>
+              <Button
+                containerStyle={styles.buttonContainer}
+                onPress={this.onPressJoinRoom}
+                title="Join Room"
+              />
+              <Text style={styles.buttonSubtitle}>
+                {'Join the party and meet people'}
+              </Text>
+            </View>
+          </View>
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -104,7 +151,42 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   contentContainer: {
+    flex: 1,
     paddingTop: 30,
-    paddingHorizontal: 10,
+    paddingHorizontal: 40,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  buttonsContainer: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'space-around',
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: 'blue',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    marginBottom: 30,
+  },
+  buttonContainer: {
+    width: '100%',
+    marginBottom: 4,
+  },
+  logoText: {
+    color: 'orange',
+    fontFamily: 'AppleSDGothicNeo-Bold',
+    fontSize: 24,
+    textAlign: 'center',
+  },
+  logoSubtitle: {
+    color: '#0288D1',
+    fontFamily: 'AppleSDGothicNeo-Regular',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  buttonSubtitle: {
+    color: 'rgb(109, 114, 120)',
+    fontFamily: 'AppleSDGothicNeo-Light',
+    fontSize: 16,
   },
 });
