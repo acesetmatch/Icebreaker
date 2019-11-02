@@ -4,10 +4,10 @@ import { ExpoLinksView } from '@expo/samples';
 import { Button, Text, ListItem, Icon } from 'react-native-elements';
 import Swiper from 'react-native-deck-swiper';
 import Modal from 'react-native-modal';
+import _ from 'lodash';
 
+import SAMPLE_ROOM from '../constants/room';
 import SAMPLE_QUESTIONS from '../constants/questions';
-import SAMPLE_MATCHES from '../constants/matches';
-import SAMPLE_USERS from '../constants/users';
 
 export default class RoomScreen extends Component {
   constructor() {
@@ -17,16 +17,78 @@ export default class RoomScreen extends Component {
       questions: SAMPLE_QUESTIONS,
       questionRankings: {},
       inProgressQuestionRankings: {},
-      allUsers: Object.keys(SAMPLE_USERS),
-      currentUsers: Object.keys(SAMPLE_USERS).splice(2),
-      users: SAMPLE_USERS,
-      matches: SAMPLE_MATCHES,
+      room: SAMPLE_ROOM,
+      matches: {},
     };
   }
 
   componentDidMount() {
-    console.log("Nav params is: " + JSON.stringify(this.props.navigation.state.params))
+    console.log(
+      'Nav params is: ' + JSON.stringify(this.props.navigation.state.params)
+    );
+    // setTimeout(() => this.setState({ canShowModal: true }), 750);
+    console.log('User id is: ' + this.props.navigation.state.params.userId);
+    this.calculateMatches();
   }
+
+  calculateMatches = () => {
+    const { navigation } = this.props;
+    const {
+      room: { users },
+      matches,
+    } = this.state;
+    let userId = navigation.getParam('userId', null);
+    userId = 'u1'; // temporary
+    const currentUser = users[userId];
+    const currentUserLikedQuestions = _.filter(
+      currentUser.questionRankings,
+      questionRanking => questionRanking === 'like'
+    );
+    const updatedMatches = {};
+    const questionsAnswered = Object.keys(currentUser.questionRankings).length;
+
+    for (let otherUserId in users) {
+      if (otherUserId === userId) {
+        continue;
+      }
+      //   let generatedMatchId;
+      //   if (otherUserId < userId) {
+      //     generatedMatchId = `${otherUserId}||${userId}`;
+      //   } else {
+      //     generatedMatchId = `${userId}||${otherUserId}`;
+      //   }
+      const matchAccumulator = 0;
+      const otherUser = users[otherUserId];
+      const otherUserLikedQuestions = _.filter(
+        currentUser.questionRankings,
+        questionRanking => questionRanking === 'like'
+      );
+      const commonQuestions = _.intersection(
+        otherUserLikedQuestions,
+        currentUserLikedQuestions
+      );
+
+      for (let questionId in currentUser.questionRankings) {
+        const currentUserAnswer = currentUser.questionRankings[questionId];
+        const otherUserAnswer = otherUser.questionRankings[questionId];
+
+        if (currentUserAnswer === 'like' && otherUserAnswer === 'like') {
+          matchAccumulator += 1.0;
+        }
+      }
+
+      const matchStrength = matchAccumulator / questionsAnswered;
+
+      updatedMatches[otherUserId] = {
+        commonQuestions: commonQuestions,
+        matchStrength,
+      };
+    }
+
+    console.log('New matches! ', updatedMatches);
+
+    this.setState({ matches: updatedMatches });
+  };
 
   shouldShowQuestionRanker() {
     const { canShowModal, questionRankings } = this.state;
@@ -90,6 +152,7 @@ export default class RoomScreen extends Component {
 
     const orderedQuestions = Object.keys(questions);
     let userId = navigation.getParam('userId', null);
+    let roomCode = navigation.getParam('roomCode', null);
 
     return (
       <View style={styles.container}>
