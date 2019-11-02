@@ -131,7 +131,9 @@ export default class RoomScreen extends Component {
   };
 
   renderUser = ({ item }) => {
-    const { users } = this.state;
+    const {
+      room: { users },
+    } = this.state;
     const user = users[item];
     return (
       <ListItem
@@ -148,8 +150,12 @@ export default class RoomScreen extends Component {
 
   render() {
     const { navigation } = this.props;
-    const { allUsers, questions } = this.state;
+    const {
+      room: { users },
+      questions,
+    } = this.state;
 
+    const allUsers = Object.keys(users);
     const orderedQuestions = Object.keys(questions);
     let userId = navigation.getParam('userId', null);
     let roomCode = navigation.getParam('roomCode', null);
@@ -160,7 +166,7 @@ export default class RoomScreen extends Component {
           style={styles.container}
           data={allUsers}
           renderItem={this.renderUser}
-          keyExtractor={item => item.id}
+          keyExtractor={item => item}
         />
       </View>
     );
