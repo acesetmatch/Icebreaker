@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  AsyncStorage,
 } from 'react-native';
 import {
   Header,
@@ -17,6 +18,7 @@ import {
   Divider,
   Icon,
 } from 'react-native-elements';
+import uuidv4 from 'uuid/v4';
 
 export default class HomeScreen extends Component {
   constructor() {
@@ -24,8 +26,31 @@ export default class HomeScreen extends Component {
     this.state = {
       roomCode: '',
       error: false,
+      userId: null,
+      questionRankings: {},
     };
   }
+
+  componentDidMount() {
+    this.hydrateUserId();
+  }
+
+  hydrateUserId = async () => {
+    try {
+      const value = await AsyncStorage.getItem('user-id');
+      if (value !== null) {
+        console.log('Hydrating user id: ', value);
+        this.setState({ userId: value });
+      } else {
+        const newId = uuidv4();
+        console.log('Setting new user id: ', newId);
+        await AsyncStorage.setItem('user-id', newId);
+        this.setState({ userId: newId });
+      }
+    } catch (error) {
+      console.log('AsyncStorage error: ', error);
+    }
+  };
 
   onPressCreateRoom = () => {
     console.log('Created room!');
@@ -33,12 +58,12 @@ export default class HomeScreen extends Component {
 
   onPressJoinRoom = () => {
     const { navigation } = this.props;
-    const { roomCode } = this.state;
+    const { roomCode, userId, questionRankings } = this.state;
     console.log(`Joining room code: ${this.state.roomCode}`);
     setTimeout(() => {
       const random = Math.floor(Math.random() * 2);
       if (random % 2 == 0) {
-        navigation.navigate('Room', { roomCode });
+        navigation.navigate('Room', { roomCode, userId, questionRankings });
       } else {
         this.setState({ error: true });
       }
