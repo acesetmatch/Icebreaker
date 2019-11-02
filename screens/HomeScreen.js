@@ -31,25 +31,25 @@ export default class HomeScreen extends Component {
   }
 
   componentDidMount() {
-    this.hydrateUserId();
+    // this.hydrateUserId();
   }
 
-  hydrateUserId = async () => {
-    try {
-      const value = await AsyncStorage.getItem('user-id');
-      if (value !== null) {
-        console.log('Hydrating user id: ', value);
-        this.setState({ userId: value });
-      } else {
-        const newId = uuidv4();
-        console.log('Setting new user id: ', newId);
-        await AsyncStorage.setItem('user-id', newId);
-        this.setState({ userId: newId });
-      }
-    } catch (error) {
-      console.log('AsyncStorage error: ', error);
-    }
-  };
+  // hydrateUserId = async () => {
+  //   try {
+  //     const value = await AsyncStorage.getItem('user-id');
+  //     if (value !== null) {
+  //       console.log('Hydrating user id: ', value);
+  //       this.setState({ userId: value });
+  //     } else {
+  //       const newId = uuidv4();
+  //       console.log('Setting new user id: ', newId);
+  //       await AsyncStorage.setItem('user-id', newId);
+  //       this.setState({ userId: newId });
+  //     }
+  //   } catch (error) {
+  //     console.log('AsyncStorage error: ', error);
+  //   }
+  // };
 
   onPressCreateRoom = () => {
     console.log('Created room!');
@@ -59,7 +59,7 @@ export default class HomeScreen extends Component {
     const { navigation } = this.props;
     const { roomCode, userId } = this.state;
     console.log(`Joining room code: ${this.state.roomCode}`);
-    navigation.navigate('Room', { roomCode, userId });
+    navigation.navigate('SignUp');
 
     // setTimeout(() => {
     //   const random = Math.floor(Math.random() * 2);
@@ -91,23 +91,6 @@ export default class HomeScreen extends Component {
         >
           <Button onPress={this.onPressCreateRoom} title="Create Room" />
           <Divider style={{ marginVertical: 30 }} />
-          <Input
-            autoCorrect={false}
-            autoCapitalize="characters"
-            maxLength={6}
-            placeholder="Enter 6-letter event code"
-            value={this.state.roomCode}
-            onChangeText={this.onChangeRoomCode}
-            errorMessage={error ? 'ERROR' : null}
-            rightIcon={
-              <Icon
-                name="clear"
-                size={24}
-                color="black"
-                onPress={this.onClearRoomCode}
-              />
-            }
-          />
           <View style={{ height: 10 }} />
           <Button onPress={this.onPressJoinRoom} title="Join Room" />
         </ScrollView>
