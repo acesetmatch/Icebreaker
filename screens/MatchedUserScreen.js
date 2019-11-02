@@ -33,9 +33,6 @@ export default class MatchedUserScreen extends Component {
     }
 
     renderQuestion = ({ item }) => {
-        const { users } = this.state;
-        const user = users[item];
-
         return (
             <ListItem
                 title={item.codename}
