@@ -10,10 +10,10 @@ import SAMPLE_MATCHES from '../constants/matches';
 import SAMPLE_USERS from '../constants/users';
 
 export default class CardSwipeScreen extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+        this.questionList = props.navigation.state.params.questionList;
         this.state = {
-            questions: SAMPLE_QUESTIONS,
             questionRankings: {},
             inProgressQuestionRankings: {},
             allUsers: Object.keys(SAMPLE_USERS),
@@ -21,7 +21,8 @@ export default class CardSwipeScreen extends Component {
             users: SAMPLE_USERS,
             matches: SAMPLE_MATCHES,
             finishedQuestions: false,
-            numOfQuestionsLeft: Object.keys(SAMPLE_QUESTIONS).length
+            numOfQuestionsLeft: Object.keys(this.questionList).length,
+            questions: this.questionList
         };
     }
 
@@ -30,19 +31,17 @@ export default class CardSwipeScreen extends Component {
     }
 
     onSwipe = (cardIndex, ranking) => {
-        const { questions, inProgressQuestionRankings } = this.state;
-        const questionId = questions[cardIndex];
-        console.log("Questions:" + questions)
-        console.log("cardIndex:" + cardIndex)
-        const numOfQuestionsLeft = Object.keys(questions).length - 1 - cardIndex;
-        console.log(`Question id ${questionId} is ${ranking}`);
+        const { inProgressQuestionRankings } = this.state;
+        const orderedQuestions = Object.values(this.questionList)
+        const numOfQuestions = orderedQuestions.length;
+        const numOfQuestionsLeft = numOfQuestions - 1 - cardIndex;
         this.setState({
             inProgressQuestionRankings: {
                 ...inProgressQuestionRankings,
                 questionId: ranking,
             },
             numOfQuestionsLeft: numOfQuestionsLeft,
-            questions: questions
+            // questions: questions
         });
     };
 
@@ -77,7 +76,8 @@ export default class CardSwipeScreen extends Component {
         const { navigation } = this.props;
         const { allUsers, questions } = this.state;
 
-        const orderedQuestions = Object.keys(questions);
+        console.log(questions)
+        let orderedQuestions = Object.keys(questions)
         const numOfQuestions = orderedQuestions.length;
         let userId = navigation.getParam('userId', null);
 

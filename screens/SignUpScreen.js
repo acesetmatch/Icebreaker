@@ -40,35 +40,36 @@ export default class SignUpScreen extends Component {
     onPressEnterCardSwipe = () => {
         const { navigation } = this.props;
         const { roomCode, codeName, errorRoomCode, errorCodeName } = this.state;
-        const { userId } = navigation.state.params;
-
+        const { userId, questionList } = navigation.state.params;
         console.log(`Joining room code: ${roomCode}`);
 
         // Validate Room code here
         // this.validateRoomCode()
 
-        if ( roomCode && codeName && !errorRoomCode, !errorCodeName) {
-            this._addUser(roomCode);
+        if (roomCode && codeName && !errorRoomCode, !errorCodeName) {
+            this._addUser(roomCode, questionList);
         } else if (!roomCode) {
-            return this.setState({errorRoomCode: true})
+            return this.setState({ errorRoomCode: true })
         } else if (!codeName) {
-            return this.setState({errorCodeName: true});
-        } 
+            return this.setState({ errorCodeName: true });
+        }
     };
 
-    _addUser = async (roomId) => {
+    _addUser = async (roomId, questionList) => {
         const userId = await AsyncStorage.getItem('user-id');
-        get_user(roomId, userId, (data)=> {
-            data && data.userId == userId ? 
-            this.props.navigation.replace("Room", {
-                roomId,
-                userId
-            })
-            : 
-            this.props.navigation.replace("CardSwipe", {
-                roomId,
-                userId
-            });
+        get_user(roomId, userId, (data) => {
+            data && data.userId == userId ?
+                this.props.navigation.replace("Room", {
+                    roomId,
+                    userId,
+                    questionList
+                })
+                :
+                this.props.navigation.replace("CardSwipe", {
+                    roomId,
+                    userId,
+                    questionList
+                });
         });
     }
 
@@ -78,13 +79,13 @@ export default class SignUpScreen extends Component {
         this.setState({ roomCode: roomId });
 
         if (roomCode.length > 5) this._checkRoom(roomId);
-        
+
     };
 
     _checkRoom = async (roomId) => {
         await get_room(roomId, (data) => {
             console.log('Found room: ', data)
-            data && data.roomId == roomId ? this.setState({ errorRoomCode: false }) : this.setState({ errorRoomCode: true }) ;
+            data && data.roomId == roomId ? this.setState({ errorRoomCode: false }) : this.setState({ errorRoomCode: true });
         });
     }
 
