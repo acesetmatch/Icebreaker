@@ -84,7 +84,7 @@ export default class HomeScreen extends Component {
   onPressJoinRoom = (questionList) => {
     const { navigation } = this.props;
     const { userId } = this.state;
-
+    
     navigation.navigate('SignUp', { userId, questionList: questionList, roomState: 'join' });
     console.log(`Joining room!`);
 
