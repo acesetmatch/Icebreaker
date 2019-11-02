@@ -27,7 +27,6 @@ export default class HomeScreen extends Component {
       roomCode: '',
       error: false,
       userId: null,
-      questionRankings: {},
     };
   }
 
@@ -58,16 +57,18 @@ export default class HomeScreen extends Component {
 
   onPressJoinRoom = () => {
     const { navigation } = this.props;
-    const { roomCode, userId, questionRankings } = this.state;
+    const { roomCode, userId } = this.state;
     console.log(`Joining room code: ${this.state.roomCode}`);
-    setTimeout(() => {
-      const random = Math.floor(Math.random() * 2);
-      if (random % 2 == 0) {
-        navigation.navigate('Room', { roomCode, userId, questionRankings });
-      } else {
-        this.setState({ error: true });
-      }
-    }, 500);
+    navigation.navigate('Room', { roomCode, userId });
+
+    // setTimeout(() => {
+    //   const random = Math.floor(Math.random() * 2);
+    //   if (random % 2 == 0) {
+    //     navigation.navigate('Room', { roomCode, userId });
+    //   } else {
+    //     this.setState({ error: true });
+    //   }
+    // }, 500);
   };
 
   onChangeRoomCode = roomCode => {
