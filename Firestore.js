@@ -133,11 +133,37 @@ const get_room = (room_id) => {
     });
 }
 /**
- *  example to get a user
+ *  example to get a room
  * */
 // get_room("room_2");
 
 
+
+/**
+ * get_questions fucntion
+ * @param {String} room_id 
+ */
+const get_questions = (list_id) => {
+  let questions = db.collection("questions").doc(list_id)
+    .get()
+    .then(doc => {
+      if (!doc.exists) {
+         console.log('No such document!');
+         return false;
+      }
+
+        console.log(doc.data());
+        return doc.data();
+    })
+    .catch(err => {
+      console.log('Error getting document', err);
+      return false;
+    });
+}
+/**
+ *  example to get a questions
+ * */
+// get_questions("list_1");
 
 /**
  * Function add_questions_list
@@ -215,7 +241,7 @@ const add_question_list = (questions_id) => {
   }
 
 
-export default {add_room, get_room, add_user, get_user, add_question_list, get_question_list};
+// export default {add_room, get_room, add_user, get_user, add_question_list, get_question_list};
 
 // not used
 const matches = {
