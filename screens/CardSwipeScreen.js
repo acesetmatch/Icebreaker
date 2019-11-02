@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { ScrollView, StyleSheet, View, FlatList, TouchableOpacity, SafeAreaView } from 'react-native';
-import { ExpoLinksView } from '@expo/samples';
 import { Button, Text, ListItem, Icon } from 'react-native-elements';
 import Swiper from 'react-native-deck-swiper';
-import Modal from 'react-native-modal';
 
 import SAMPLE_QUESTIONS from '../constants/questions';
 import SAMPLE_MATCHES from '../constants/matches';

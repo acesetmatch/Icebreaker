@@ -46,7 +46,7 @@ export default class SignUpScreen extends Component {
         // Validate Room code here
         // this.validateRoomCode()
 
-        if ( roomCode && codeName && !errorRoomCode, !errorCodeName) {
+        if ( roomCode && codeName && !errorRoomCode && !errorCodeName) {
             this._addUser(roomCode);
         } else if (!roomCode) {
             return this.setState({errorRoomCode: true})

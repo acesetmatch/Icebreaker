@@ -114,7 +114,7 @@ const add_room = (room_id, room_name) => {
 /**
  * example add room
  */
-add_room("ROOM11", "First room");
+// add_room("ROOM11", "First room");
 
 /**
  * get_room fucntion
