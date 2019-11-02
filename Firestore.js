@@ -3,7 +3,7 @@ const firebase = require("firebase");
 require("firebase/firestore");
 
 // Your web app's Firebase configuration
-var firebaseConfig = {
+const firebaseConfig = {
     apiKey: "AIzaSyBVDXrye08NfkH6u6zD5RDDmiIvvs0YtxU",
     authDomain: "icebreaker-101.firebaseapp.com",
     databaseURL: "https://icebreaker-101.firebaseio.com",
@@ -16,7 +16,9 @@ var firebaseConfig = {
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig); 
-var db = firebase.firestore();
+
+// database firestore instance..
+export const db = firebase.firestore();
 
 /**
  * Function add_user
@@ -24,7 +26,7 @@ var db = firebase.firestore();
  *  1) room_id is the room id
  *  2) userInfo is a user object contains user info ---> id, codeName, and description
  *  */ 
-const add_user = (room_id, userInfo) => {
+export const add_user = (room_id, userInfo) => {
   db.collection("rooms").doc(room_id).update({
     [`users.${userInfo.id}`]: {
         userId: userInfo.id,
@@ -56,7 +58,7 @@ const add_user = (room_id, userInfo) => {
  *  accepts 1 args
  *  1) room_id is the room id
  *  */ 
-const add_room = (room_id) => {
+export const add_room = (room_id) => {
     db.collection("rooms").doc(room_id).set({
         roomId: room_id,
         users: {
@@ -76,7 +78,7 @@ const add_room = (room_id) => {
  *  accepts 1 args
  *  1) question_id is the question id
  *  */ 
-const add_question_list = (questions_id) => {
+export const add_question_list = (questions_id) => {
     db.collection("questions").doc(questions_id).set({
         q1: {
             questionId: 'q1',
