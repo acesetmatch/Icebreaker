@@ -20,6 +20,7 @@ import {
   Icon,
 } from 'react-native-elements';
 import logoAsset from '../assets/logo.jpg';
+import { get_question_list } from '../Firestore';
 
 
 export default class HomeScreen extends Component {
@@ -28,11 +29,13 @@ export default class HomeScreen extends Component {
     this.state = {
       error: false,
       userId: null,
+      questionList: {}
     };
   }
 
   componentDidMount() {
     this.hydrateUserId();
+    this.getQuestions();
   }
 
 
@@ -63,6 +66,15 @@ export default class HomeScreen extends Component {
     }
   };
 
+  getQuestions = () => {
+    get_question_list("list_1", (data) => {
+      console.log(data)
+      this.setState({
+        questionList: data
+      })
+    })
+  }
+
   onPressCreateRoom = () => {
     const { navigation } = this.props;
     const { userId } = this.state;
@@ -70,11 +82,11 @@ export default class HomeScreen extends Component {
     navigation.navigate('SignUp', { userId, roomState: 'create' });
   };
 
-  onPressJoinRoom = () => {
+  onPressJoinRoom = (questionList) => {
     const { navigation } = this.props;
     const { userId } = this.state;
+    navigation.navigate('SignUp', { userId, questionList: questionList, roomState: 'join' });
     console.log(`Joining room!`);
-    navigation.navigate('SignUp', { userId, roomState: 'join' });
 
     // setTimeout(() => {
     //   const random = Math.floor(Math.random() * 2);
@@ -144,7 +156,7 @@ export default class HomeScreen extends Component {
             <View style={{ alignItems: 'center' }}>
               <Button
                 containerStyle={styles.buttonContainer}
-                onPress={this.onPressJoinRoom}
+                onPress={() => this.onPressJoinRoom(this.state.questionList)}
                 title="Join Room"
               />
               <Text style={styles.buttonSubtitle}>
