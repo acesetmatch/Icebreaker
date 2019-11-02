@@ -37,7 +37,7 @@ export default class RoomScreen extends Component {
     console.log('Nav params is: ' + JSON.stringify(navigation.state.params));
     console.log('User id is: ' + navigation.state.params.userId);
     let userId = navigation.getParam('userId', null);
-    let roomCode = navigation.getParam('roomCode', null);
+    let roomCode = navigation.getParam('roomId', null);
     // const roomRef = get_room_ref(roomCode);
     // let observer = roomRef.onSnapshot(
     //   newUsersSnapshot => {
@@ -51,6 +51,7 @@ export default class RoomScreen extends Component {
     //   }
     // );
     setInterval(() => {
+      console.log("FUUUUCK", roomCode)
       get_room(roomCode, data => {
         console.log(data);
         this.setState({ room: data });
