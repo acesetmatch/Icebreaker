@@ -83,11 +83,13 @@ export default class SignUpScreen extends Component {
         const userId = await AsyncStorage.getItem('user-id') || this.generateUserId(10);
         const { description, codeName } = this.state;
 
+        console.log("FROM SUIGN UP: ", description, codeName )
+
         get_user(roomId, userId, (data)=> {
             data && data.userId == userId ? 
             this.props.navigation.replace("Room", {
                 roomId,
-                userId
+                userId,
             })
             : 
             this.props.navigation.replace("CardSwipe", {
@@ -98,21 +100,6 @@ export default class SignUpScreen extends Component {
             });
         });
     }
-
-  _addUser = async roomId => {
-    const userId = await AsyncStorage.getItem('user-id');
-    get_user(roomId, userId, data => {
-      data && data.userId == userId
-        ? this.props.navigation.replace('Room', {
-            roomId,
-            userId,
-          })
-        : this.props.navigation.replace('CardSwipe', {
-            roomId,
-            userId,
-          });
-    });
-  };
 
   onChangeRoomCode = roomCode => {
     const roomId = roomCode.trim().toUpperCase();
