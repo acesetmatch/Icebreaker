@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-  createAppContainer,
-  createStackNavigator,
-} from 'react-navigation';
+import { createAppContainer, createStackNavigator } from 'react-navigation';
 
 import RoomScreen from '../screens/RoomScreen';
 import HomeScreen from '../screens/HomeScreen';
@@ -21,7 +18,7 @@ export default createAppContainer(
         screen: RoomScreen,
         path: '',
         navigationOptions: ({ navigation }) => ({
-          // title: navigation.state.params.roomCode,
+          title: navigation.getParam('roomCode', ''),
         }),
       },
     },

@@ -33,11 +33,12 @@ export default class HomeScreen extends Component {
 
   onPressJoinRoom = () => {
     const { navigation } = this.props;
+    const { roomCode } = this.state;
     console.log(`Joining room code: ${this.state.roomCode}`);
     setTimeout(() => {
       const random = Math.floor(Math.random() * 2);
       if (random % 2 == 0) {
-        navigation.navigate('Room');
+        navigation.navigate('Room', { roomCode });
       } else {
         this.setState({ error: true });
       }
