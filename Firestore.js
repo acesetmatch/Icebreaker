@@ -28,8 +28,8 @@ const db = firebase.firestore();
  *  */ 
 const add_user = (room_id, userInfo) => {
   db.collection("rooms").doc(room_id).update({
-    [`users.${userInfo.id}`]: {
-        userId: userInfo.id,
+    [`users.${userInfo.userId}`]: {
+        userId: userInfo.userId,
         codeName: userInfo.codeName,
         description: userInfo.description,
         questionRankings: userInfo.questionRankings
@@ -68,27 +68,27 @@ const add_user = (room_id, userInfo) => {
  * @param {String} room_id 
  * @param {String} user_id 
  */
-const get_user = (room_id, user_id) => {
-  let users = db.collection("rooms").doc(room_id);
-  let user = users.get()
+const get_user = (room_id, user_id, cb) => {
+  return db.collection("rooms").doc(room_id).get()
     .then(doc => {
       if (!doc.exists) {
          console.log('No such document!');
-         return false;
+         return cb(false);
       }
 
         console.log(doc.data().users[user_id]);
-        return doc.data().users[user_id];
+        return cb(doc.data().users[user_id]);
     })
     .catch(err => {
       console.log('Error getting document', err);
-      return false;
+      return cb(false);
     });
-}
+};
+
 /**
  *  example to get a user
  * */
-// get_user("room_2", "user_3");
+// get_user("room_2", "user_3", (data)=>{});
 
 
 /**
@@ -96,46 +96,53 @@ const get_user = (room_id, user_id) => {
  *  accepts 1 args
  *  1) room_id is the room id
  *  */ 
-const add_room = (room_id) => {
+const add_room = (room_id, room_name) => {
     db.collection("rooms").doc(room_id).set({
         roomId: room_id,
+        roomName: room_name,
         users: {
             
         }
     })
     .then(function(docRef) {
-        console.log("Document written with ID: ", room_id);
+        console.log("get room ID: ", room_id);
     })
     .catch(function(error) {
         console.error("Error adding document: ", error);
     });
 }
+/**
+ * example add room
+ */
+// add_room("ROOM11", "First room");
 
 /**
  * get_room fucntion
  * @param {String} room_id 
  */
-const get_room = (room_id) => {
-  let rooms = db.collection("rooms").doc(room_id)
+const get_room = (room_id, cb) => {
+  db.collection("rooms").doc(room_id)
     .get()
     .then(doc => {
       if (!doc.exists) {
          console.log('No such document!');
-         return false;
+        return cb(false);
       }
 
-        console.log(doc.data());
-        return doc.data();
+        // console.log(doc.data());
+        return cb(doc.data());
     })
     .catch(err => {
       console.log('Error getting document', err);
-      return false;
+      return cb(false);
     });
 }
 /**
  *  example to get a room
  * */
-// get_room("room_2");
+// get_room("ROOM11", (data)=>{
+//   console.log(data);
+// });
 
 
 
@@ -143,27 +150,29 @@ const get_room = (room_id) => {
  * get_questions fucntion
  * @param {String} room_id 
  */
-const get_question_list = (list_id) => {
-  let questions = db.collection("questions").doc(list_id)
+const get_question_list = (list_id, cb) => {
+  db.collection("questions").doc(list_id)
     .get()
     .then(doc => {
       if (!doc.exists) {
          console.log('No such document!');
-         return false;
+         return cb(false);
       }
 
         console.log(doc.data());
-        return doc.data();
+        return cb(doc.data());
     })
     .catch(err => {
       console.log('Error getting document', err);
-      return false;
+      return cb(false);
     });
 }
 /**
  *  example to get a questions
  * */
-// get_questions("list_1");
+// get_questions("list_1", (data)=>{
+//  console.log(data);
+// });
 
 /**
  * Function add_questions_list
@@ -241,7 +250,7 @@ const add_question_list = (questions_id) => {
   }
 
 
-  module.exports = {add_room, get_room, add_user, get_user, add_question_list, get_question_list};
+  module.exports = {db, add_room, get_room, add_user, get_user, add_question_list, get_question_list};
 
 // not used
 const matches = {

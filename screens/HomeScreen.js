@@ -1,5 +1,4 @@
-import * as WebBrowser from 'expo-web-browser';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import {
   Image,
   Platform,
@@ -8,7 +7,9 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ImageBackground,
   AsyncStorage,
+  SafeAreaView,
 } from 'react-native';
 import {
   Header,
@@ -18,7 +19,9 @@ import {
   Divider,
   Icon,
 } from 'react-native-elements';
-import uuidv4 from 'uuid/v4';
+import logoAsset from '../assets/logo.jpg';
+import { get_question_list } from '../Firestore';
+
 
 export default class HomeScreen extends Component {
   constructor() {
@@ -26,21 +29,34 @@ export default class HomeScreen extends Component {
     this.state = {
       error: false,
       userId: null,
+      questionList: {}
     };
   }
 
   componentDidMount() {
     this.hydrateUserId();
+    this.getQuestions();
+  }
+
+
+  generateUserId = (length) => {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
   }
 
   hydrateUserId = async () => {
     try {
-      const value = await AsyncStorage.getItem('user-id');
+      const value = await AsyncStorage.getItem('user-id') || this.generateUserId(10);
       if (value !== null) {
         console.log('Hydrating user id: ', value);
         this.setState({ userId: value });
       } else {
-        const newId = uuidv4();
+        const newId = this.generateUserId(10);
         console.log('Setting new user id: ', newId);
         await AsyncStorage.setItem('user-id', newId);
         this.setState({ userId: newId });
@@ -50,15 +66,27 @@ export default class HomeScreen extends Component {
     }
   };
 
-  onPressCreateRoom = () => {
-    console.log('Created room!');
-  };
+  getQuestions = () => {
+    get_question_list("list_1", (data) => {
+      console.log(data)
+      this.setState({
+        questionList: data
+      })
+    })
+  }
 
-  onPressJoinRoom = () => {
+  onPressCreateRoom = () => {
     const { navigation } = this.props;
     const { userId } = this.state;
-    console.log(`Joining room code: ${this.state.roomCode}`);
-    navigation.navigate('SignUp', { userId });
+    console.log('Creating room!');
+    navigation.navigate('SignUp', { userId, roomState: 'create' });
+  };
+
+  onPressJoinRoom = (questionList) => {
+    const { navigation } = this.props;
+    const { userId } = this.state;
+    navigation.navigate('SignUp', { userId, questionList: questionList, roomState: 'join' });
+    console.log(`Joining room!`);
 
     // setTimeout(() => {
     //   const random = Math.floor(Math.random() * 2);
@@ -83,17 +111,61 @@ export default class HomeScreen extends Component {
   render() {
     const { error } = this.state;
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <ScrollView
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
         >
-          <Button onPress={this.onPressCreateRoom} title="Create Room" />
-          <Divider style={{ marginVertical: 30 }} />
-          <View style={{ height: 10 }} />
-          <Button onPress={this.onPressJoinRoom} title="Join Room" />
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginBottom: 30,
+            }}
+          >
+            <ImageBackground
+              style={{
+                height: 'auto',
+                width: 300,
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: 10,
+              }}
+              source={logoAsset}
+              resizeMode="contain"
+            >
+              <Text style={styles.logoText}>{'Icebreaker'}</Text>
+            </ImageBackground>
+            <Text style={styles.logoSubtitle}>
+              {'The easy way to break the ice\nand make better connections'}
+            </Text>
+          </View>
+          <View style={styles.buttonsContainer}>
+            <View style={{ alignItems: 'center' }}>
+              <Button
+                containerStyle={styles.buttonContainer}
+                onPress={this.onPressCreateRoom}
+                title="Create Room"
+              />
+              <Text style={styles.buttonSubtitle}>
+                {"Let's get this party started"}
+              </Text>
+            </View>
+            <View style={{ alignItems: 'center' }}>
+              <Button
+                containerStyle={styles.buttonContainer}
+                onPress={() => this.onPressJoinRoom(this.state.questionList)}
+                title="Join Room"
+              />
+              <Text style={styles.buttonSubtitle}>
+                {'Join the party and meet people'}
+              </Text>
+            </View>
+          </View>
         </ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -104,7 +176,42 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   contentContainer: {
+    flex: 1,
     paddingTop: 30,
-    paddingHorizontal: 10,
+    paddingHorizontal: 40,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  buttonsContainer: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'space-around',
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: 'blue',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    marginBottom: 30,
+  },
+  buttonContainer: {
+    width: '100%',
+    marginBottom: 4,
+  },
+  logoText: {
+    color: 'orange',
+    fontFamily: 'AppleSDGothicNeo-Bold',
+    fontSize: 24,
+    textAlign: 'center',
+  },
+  logoSubtitle: {
+    color: '#0288D1',
+    fontFamily: 'AppleSDGothicNeo-Regular',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  buttonSubtitle: {
+    color: 'rgb(109, 114, 120)',
+    fontFamily: 'AppleSDGothicNeo-Light',
+    fontSize: 16,
   },
 });

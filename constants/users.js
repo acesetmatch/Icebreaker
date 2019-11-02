@@ -3,7 +3,7 @@ const users = {
     id: 'u1',
     codename: 'codename1',
     description: 'random random random 1',
-    question_rankings: {
+    questionRankings: {
       q1: 'like',
       q2: 'dislike',
       q3: 'dislike',
@@ -17,7 +17,7 @@ const users = {
     id: 'u1',
     codename: 'codename2',
     description: 'random random random 2',
-    question_rankings: {
+    questionRankings: {
       q1: 'dislike',
       q2: 'dislike',
       q3: 'dislike',
@@ -31,7 +31,7 @@ const users = {
     id: 'u1',
     codename: 'codename3',
     description: 'random random random 3',
-    question_rankings: {
+    questionRankings: {
       q1: 'dislike',
       q2: 'dislike',
       q3: 'like',
@@ -45,7 +45,7 @@ const users = {
     id: 'u4',
     codename: 'codename4',
     description: 'random random random 4',
-    question_rankings: {
+    questionRankings: {
       q1: 'dislike',
       q2: 'like',
       q3: 'like',
@@ -59,7 +59,7 @@ const users = {
     id: 'u5',
     codename: 'codename5',
     description: 'random random random 5',
-    question_rankings: {
+    questionRankings: {
       q1: 'dislike',
       q2: 'like',
       q3: 'dislike',
