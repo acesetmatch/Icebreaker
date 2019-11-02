@@ -159,7 +159,7 @@ const get_question_list = (list_id, cb) => {
          return cb(false);
       }
 
-        console.log(doc.data());
+        // console.log(doc.data());
         return cb(doc.data());
     })
     .catch(err => {

@@ -57,11 +57,10 @@ export default class SignUpScreen extends Component {
 
   onPressEnterCardSwipe = () => {
     const { roomCode, codeName, errorRoomCode, errorCodeName } = this.state;
-    const { questionList } = this.props.navigation.state.params
     console.log(`Joining room code: ${roomCode}`);
 
     if (roomCode && codeName && !errorRoomCode && !errorCodeName) {
-      this._addUser(roomCode, questionList);
+      this._addUser(roomCode);
     } else if (!roomCode) {
       return this.setState({ errorRoomCode: true });
     } else if (!codeName) {
@@ -79,17 +78,21 @@ export default class SignUpScreen extends Component {
     return result;
   }
 
-  _addUser = async (roomId, questionList) => {
+  _addUser = async (roomId) => {
     const userId = await AsyncStorage.getItem('user-id') || this.generateUserId(10);
-    const { description, codeName } = this.state;
+    const { description, codeName, roomName } = this.state;
+    const { questionList } = this.props.navigation.state.params;
+    const roomState = this.props.navigation.getParam('roomState', 'join');
 
-    console.log("FROM SUIGN UP: ", description, codeName)
+    console.log("FROM SUIGN UP: ", description, codeName, questionList)
 
     get_user(roomId, userId, (data) => {
       data && data.userId == userId ?
         this.props.navigation.replace("Room", {
           roomId,
           userId,
+          roomState,
+          roomName
         })
         :
         this.props.navigation.replace("CardSwipe", {
@@ -97,7 +100,9 @@ export default class SignUpScreen extends Component {
           userId,
           description,
           codeName,
-          questionList
+          questionList,
+          roomState,
+          roomName
         });
     });
   }

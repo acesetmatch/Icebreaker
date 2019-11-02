@@ -6,7 +6,7 @@ import Swiper from 'react-native-deck-swiper';
 import SAMPLE_QUESTIONS from '../constants/questions';
 import SAMPLE_MATCHES from '../constants/matches';
 import SAMPLE_USERS from '../constants/users';
-import { add_user } from '../Firestore';
+import { add_user, add_room } from '../Firestore';
 
 export default class CardSwipeScreen extends Component {
     constructor(props) {
@@ -64,10 +64,13 @@ export default class CardSwipeScreen extends Component {
     };
 
     enterRoomScreen = async () => {
-        const { userId, codeName, roomId, description } = this.props.navigation.state.params;
+        const { userId, codeName, roomId, description, roomState, roomName } = this.props.navigation.state.params;
 
         console.log('!!!!', userId, roomId, codeName, description);
 
+        if (roomState != "join") {
+            await add_room(roomId, roomName);
+        }
         await add_user(roomId, {
             userId,
             codeName,
