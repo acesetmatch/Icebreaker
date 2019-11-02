@@ -42,12 +42,12 @@ export default createAppContainer(
         screen: MatchedUserScreen,
         path: '',
         navigationOptions: ({ navigation }) => ({
-          title: navigation.getParam('userObject', '').codeName,
+          title: "You and " + navigation.getParam('user', '').codename,
         }),
       }
     },
     {
-      initialRouteName: 'Home',
+      initialRouteName: 'Room',
     }
   )
 );
