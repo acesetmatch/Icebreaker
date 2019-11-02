@@ -111,8 +111,10 @@ const add_room = (room_id, room_name) => {
         console.error("Error adding document: ", error);
     });
 }
-
-add_room("room_1", "First room");
+/**
+ * example add room
+ */
+// add_room("room_1", "First room");
 
 /**
  * get_room fucntion
