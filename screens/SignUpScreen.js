@@ -29,11 +29,33 @@ export default class SignUpScreen extends Component {
     super();
     this.state = {
       roomCode: '',
+      roomName: '',
       codeName: '',
       description: '',
       error: false,
+      errorCodeName: null,
+      errorRoomCode: null,
     };
   }
+
+  componentDidMount() {
+    const { navigation } = this.props;
+    const roomSelectState = navigation.getParam('roomState', 'join');
+
+    if (roomSelectState === 'create') {
+      this.setState({ roomCode: this.generateRoomCode() });
+    }
+  }
+
+  generateRoomCode = (length = 6) => {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  };
 
   onPressEnterCardSwipe = () => {
     const { navigation } = this.props;
@@ -45,7 +67,7 @@ export default class SignUpScreen extends Component {
     // Validate Room code here
     // this.validateRoomCode()
 
-    if ((roomCode && codeName && !errorRoomCode, !errorCodeName)) {
+    if (roomCode && codeName && !errorRoomCode && !errorCodeName) {
       this._addUser(roomCode);
     } else if (!roomCode) {
       return this.setState({ errorRoomCode: true });
@@ -86,12 +108,21 @@ export default class SignUpScreen extends Component {
     });
   };
 
+  onChangeRoomName = roomName => {
+    this.setState({ roomName });
+  };
+
   onChangeCodeName = codeName => {
-    this.setState({ codeName });
+    this.setState({ codeName, errorCodeName: false });
   };
 
   onChangeDescription = description => {
     this.setState({ description });
+  };
+
+  onClearRoomName = () => {
+    console.log(`Clearing room name`);
+    this.setState({ roomName: '' });
   };
 
   onClearRoomCode = () => {
@@ -99,8 +130,67 @@ export default class SignUpScreen extends Component {
     this.setState({ roomCode: '' });
   };
 
+  onClearCodeName = () => {
+    console.log(`Clearing room code`);
+    this.setState({ codeName: '' });
+  };
+
   render() {
-    const { errorCodeName, errorRoomCode } = this.state;
+    const { navigation } = this.props;
+    const { roomCode, errorCodeName, errorRoomCode } = this.state;
+    const roomSelectState = navigation.getParam('roomState', 'join');
+
+    let roomNameElement;
+    let roomCodeElement;
+    if (roomSelectState === 'join') {
+      roomNameElement = null;
+      roomCodeElement = (
+        <Input
+          autoCorrect={false}
+          autoCapitalize="characters"
+          maxLength={6}
+          containerStyle={{ padding: 0 }}
+          style={{ padding: 0 }}
+          placeholder="Enter 6-letter event code"
+          value={this.state.roomCode}
+          onChangeText={this.onChangeRoomCode}
+          errorMessage={errorRoomCode ? "Room doesn't exist!" : null}
+          rightIcon={
+            <Icon
+              name="clear"
+              size={24}
+              color="black"
+              onPress={this.onClearRoomCode}
+            />
+          }
+        />
+      );
+    } else if (roomSelectState === 'create') {
+      roomNameElement = (
+        <View style={styles.textInputContainer}>
+          <Text>{'Room Name'}</Text>
+          <Input
+            containerStyle={{ padding: 0 }}
+            style={{ padding: 0 }}
+            placeholder="(optional)"
+            value={this.state.roomName}
+            onChangeText={this.onChangeRoomName}
+            rightIcon={
+              <Icon
+                name="clear"
+                size={24}
+                color="black"
+                onPress={this.onClearRoomName}
+              />
+            }
+          />
+        </View>
+      );
+      roomCodeElement = (
+        <Text style={styles.generatedRoomCodeText}>{roomCode}</Text>
+      );
+    }
+
     return (
       <View style={styles.container}>
         <ScrollView
@@ -109,31 +199,14 @@ export default class SignUpScreen extends Component {
         >
           <View style={styles.textInputContainer}>
             <Text>Room Code</Text>
-            <Input
-              autoCorrect={false}
-              autoCapitalize="characters"
-              maxLength={6}
-              containerStyle={{ padding: 0 }}
-              style={{ padding: 0 }}
-              placeholder="Enter 6-letter event code"
-              value={this.state.roomCode}
-              onChangeText={this.onChangeRoomCode}
-              errorMessage={errorRoomCode ? "Room doesn't exist!" : null}
-              rightIcon={
-                <Icon
-                  name="clear"
-                  size={24}
-                  color="black"
-                  onPress={this.onClearRoomCode}
-                />
-              }
-            />
+            {roomCodeElement}
           </View>
+          {roomNameElement}
           <View style={styles.textInputContainer}>
-            <Text>Your Code Name</Text>
+            <Text>Your "Code Name"</Text>
             <Input
               autoCorrect={false}
-              placeholder="Enter a code name (e.g: Superman)"
+              placeholder="e.g., Superman999"
               value={this.state.codeName}
               onChangeText={this.onChangeCodeName}
               errorMessage={errorCodeName ? 'Please enter a nickname!' : null}
@@ -143,7 +216,7 @@ export default class SignUpScreen extends Component {
                   name="clear"
                   size={24}
                   color="black"
-                  onPress={this.onClearRoomCode}
+                  onPress={this.onClearCodeName}
                 />
               }
             />
@@ -161,6 +234,8 @@ export default class SignUpScreen extends Component {
                 borderRadius: 5,
                 borderColor: 'grey',
                 borderWidth: 1,
+                padding: 15,
+                paddingTop: 10,
               }}
             />
           </View>
@@ -168,7 +243,7 @@ export default class SignUpScreen extends Component {
         <Button
           style={styles.joinButton}
           onPress={this.onPressEnterCardSwipe}
-          title="Start Swiping"
+          title="Start meeting new people!"
         />
       </View>
     );
@@ -193,4 +268,10 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   textInput: {},
+  generatedRoomCodeText: {
+    paddingLeft: 8,
+    paddingTop: 5,
+    fontSize: 16,
+    color: 'gray',
+  },
 });
