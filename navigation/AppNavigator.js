@@ -51,7 +51,7 @@ export default createAppContainer(
       }
     },
     {
-      initialRouteName: 'Room',
+      initialRouteName: 'Home',
     }
   )
 );
