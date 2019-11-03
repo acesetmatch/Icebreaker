@@ -50,15 +50,21 @@ export default class RoomScreen extends Component {
     //     console.log(`Encountered error: ${err}`);
     //   }
     // );
-    setInterval(() => {
-      console.log("FUUUUCK", roomCode)
+
+    this.userList = setInterval(() => {
       get_room(roomCode, data => {
         console.log(data);
         this.setState({ room: data });
         this.calculateMatches(data);
       });
     }, 5000);
+
   }
+
+  componentWillUnmount() {
+    clearInterval(this.userList)
+  }
+
 
   calculateMatches = async newUsersData => {
     const { navigation } = this.props;
